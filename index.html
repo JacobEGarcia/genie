@@ -292,7 +292,7 @@ let camBase = {x:0, y:1.7, z:7.0};
 {
   const g = new THREE.SphereGeometry(90, 32, 24);
   const pos = g.attributes.position, colors = [];
-  const top = new THREE.Color(0x070612), mid = new THREE.Color(0x191233), hor = new THREE.Color(0x3d2547), bot = new THREE.Color(0x0b0a18);
+  const top = new THREE.Color(0x05060f), mid = new THREE.Color(0x12142e), hor = new THREE.Color(0x232048), bot = new THREE.Color(0x0a0a16);
   for (let i=0;i<pos.count;i++){
     const y = pos.getY(i)/90;
     let c;
@@ -490,7 +490,11 @@ new GLTFLoader().load(LAMP_URL, (gltf)=>{
   const c = box.getCenter(new THREE.Vector3());
   lamp.position.set(-c.x, -box.min.y, -c.z);
   spoutTip.set((box.max.x-c.x)*0.97, (box.max.y-box.min.y)*0.62, 0);
-  lamp.traverse(o=>{ if(o.isMesh && o.material){ o.material.envMapIntensity = 1.6; o.material.needsUpdate = true; }});
+  lamp.traverse(o=>{ if(o.isMesh && o.material){ const m=o.material;
+    if('metalness' in m) m.metalness = 1.0;
+    if('roughness' in m) m.roughness = 0.27;
+    if(m.color) m.color.lerp(new THREE.Color(0xcf9a3e), 0.5);
+    m.envMapIntensity = 1.7; m.needsUpdate = true; }});
   lampGroup.add(lamp);
   document.getElementById('veil').classList.add('gone');
 }, undefined, ()=>{ document.getElementById('veil').classList.add('gone'); });
@@ -586,8 +590,8 @@ function layout(){
   aspect = w/h;
   renderer.setSize(w, h);
   camera.aspect = aspect;
-  if (aspect < 0.85){ camBase = {x:0, y:2.0, z:9.4}; camera.fov = 44; lampGroup.position.x = 0; lampGroup.position.y = 0.55; }
-  else { camBase = {x:-1.05, y:1.6, z:7.5}; camera.fov = 38; lampGroup.position.x = 2.1; lampGroup.position.y = 0; }
+  if (aspect < 0.85){ camBase = {x:0, y:2.15, z:9.8}; camera.fov = 44; lampGroup.position.x = 0; lampGroup.position.y = 0.12; baseY = 0.12; }
+  else { camBase = {x:-1.05, y:1.6, z:7.5}; camera.fov = 38; lampGroup.position.x = 2.1; lampGroup.position.y = 0; baseY = 0; }
   camera.updateProjectionMatrix();
 }
 addEventListener('resize', layout); layout();
